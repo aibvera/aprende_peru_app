@@ -1,0 +1,9 @@
+node_modules
+sql_scripts
+.env
+.vscode
+.db
+.sqlite3
+uploads
+coverage
+static

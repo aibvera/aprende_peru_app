@@ -1,0 +1,81 @@
+header {
+  width: 100%;
+  display: flex;
+  border-bottom: solid 1px var(--border-color);
+  background-color: var(--main-bg);
+}
+
+header a:hover {
+  cursor: pointer;
+}
+
+nav {
+  width: inherit;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  height: var(--header-height);
+  background-color: var(--main-bg);
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+}
+
+/* Botón hamburguesa */
+.menu-toggle {
+  font-size: 1.8rem;
+  cursor: pointer;
+  user-select: none;
+  color: var(--primary-color);
+}
+
+/* Logo centrado */
+#logo {
+  font-weight: bold;
+  font-size: 2rem;
+  color: var(--primary-color);
+  text-align: center;
+  flex-grow: 1;
+}
+
+/* Botones login/register */
+.auth-buttons {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn-login {
+  margin-right: 10px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 10px;
+  background-color: var(--primary-color);
+  color: white;
+  transition: background-color 0.3s ease;
+}
+.btn-login:hover {
+  background-color: var(--primary-color-soft1);
+}
+.btn-register {
+  margin-left: 5px;
+  margin-right: 2.5px;
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 10px;
+  color: var(--primary-color);
+  transition: background-color 0.3s ease;
+}
+.btn-register:hover {
+  background-color: var(--primary-color-soft2);
+}
+
+/********************************************************/
+/* Responsividad del header */
+/********************************************************/
+
+@media (max-width: 768px) {
+  #logo {
+    font-size: 1.5rem;
+  }
+}

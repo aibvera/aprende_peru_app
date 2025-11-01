@@ -1,0 +1,255 @@
+import * as sCurso from "../services/cursos.service.js";
+import { ValidationError, UniqueConstraintError } from "sequelize";
+import { UPLOADS_FOLDER } from "../config/env.js";
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
+
+// Obtener todos los cursos (incluye categoría y nivel)
+export const getAllCourses = async (req, res) => {
+    try {
+        const cursos = await sCurso.serv_getAllCourses();
+        res.status(200).json(cursos);
+    } catch (error) {
+        console.error("Error en controlador getAllCourses:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Obtener un curso por ID
+export const getCourseById = async (req, res) => {
+    try {
+
+        // Validar que hay un id en la URL
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ error: "No hay id en la URL" });
+        }
+
+        // Obtener curso desde la BD
+        const curso = await sCurso.serv_getCourseById(id);
+
+        // Validar que existe el curso
+        if (!curso) {
+            return res.status(404).json({ error: "Curso no encontrado" });
+        }
+
+        // Devolver el curso
+        res.status(200).json(curso);
+
+    } catch (error) {
+        console.error("Error en controlador getCourseById:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Crear un curso
+export const createCourse = async (req, res) => {
+    try {
+        const data = req.body;
+
+        // Validar que el body existe
+        if (!data) {
+            return res.status(400).json({ error: "No hay body en la petición" });
+        }
+
+        // Validar campos obligatorios
+        if (!data.course_name || !data.price || !data.category || !data.level) {
+            return res.status(400).json({ 
+                error: "Faltan datos obligatorios (course_name, price, id_categ, id_level)" 
+            });
+        }
+
+        // Validar precio
+        if (isNaN(data.price) || Number(data.price) <= 0) {
+            return res.status(400).json({ error: "El precio debe ser un número positivo" });
+        }
+
+        // Crear curso
+        const newCourse = await sCurso.serv_createCourse(data);
+        res.status(201).json(newCourse);
+
+    } catch (error) {
+
+        // Errores por validaciones de la BD
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                error: "Error de validación",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        if (error instanceof UniqueConstraintError) {
+            return res.status(409).json({
+                error: "Conflicto: valor duplicado en un campo único",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        // Otros errores
+        console.error("Error en controlador createCourse:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Actualizar un curso
+export const updateCourse = async (req, res) => {
+    try {
+
+        // Validar que hay un id en la URL
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ error: "No hay id en la URL" });
+        }
+
+        // Validar que haya, al menos, un campo para actualizar
+        const newData = req.body;
+        if (!newData || 
+            (!newData.course_name && !newData.price && !newData.category && !newData.level)) {
+            return res.status(400).json({ error: "Falta algún campo para actualizar" });
+        }
+
+        // Validar que el precio (si se recibe precio) sea un número
+        if (newData.price && (isNaN(newData.price) || Number(newData.price) <= 0)) {
+            return res.status(400).json({ error: "El precio debe ser un número positivo" });
+        }
+
+        // Actualizar curso en la BD y avisar si no existe el curso
+        const updatedCourse = await sCurso.serv_updateCourseById(id, newData);
+        if (!updatedCourse) {
+            return res.status(404).json({ error: "Curso no encontrado" });
+        }
+
+        // Devolver el curso actualizado
+        res.status(200).json(updatedCourse);
+
+    } catch (error) {
+
+        // Errores por validación a nivel de BD
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                error: "Error de validación",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        if (error instanceof UniqueConstraintError) {
+            return res.status(409).json({
+                error: "Conflicto: valor duplicado en un campo único",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        // Otros errores
+        console.error("Error en controlador updateCourse:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Eliminar un curso
+export const deleteCourse = async (req, res) => {
+    try {
+
+        // Validar que hay un ID
+        const { id } = req.params;
+        if (!id) {
+            return res.status(400).json({ error: "No hay id en la URL" });
+        }
+
+        // Eliminar curso y avisar si no se encontró
+        const deletedCourse = await sCurso.serv_deleteCourseById(id);
+        if (!deletedCourse) {
+            return res.status(404).json({ error: "Curso no encontrado" });
+        }
+
+        // Devolver mensaje de éxito
+        res.status(200).json({ message: "Curso eliminado con éxito" });
+
+    } catch (error) {
+        console.error("Error en controlador deleteCourse:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Subir imagen de un curso
+export const uploadCourseImage = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        // Validamos que se haya subido un archivo
+        if (!req.file) {
+            return res.status(400).json({ message: 'Debe subir una imagen.' });
+        }
+
+        // Actualizamos el curso con la imagen
+        const newData = {
+            image_path: `${UPLOADS_FOLDER}/cursos/${req.file.filename}`
+        };
+        const updatedCourse = await sCurso.serv_updateCourseById(id, newData);
+        if (!updatedCourse) {
+            return res.status(404).json({ error: "Curso no encontrado" });
+        }
+
+        // Devolver el curso actualizado
+        res.status(200).json({
+            message: "Imagen subida correctamente",
+            curso: updatedCourse
+        });
+
+    } catch (error) {
+
+        // Errores por validación a nivel de BD
+        if (error instanceof ValidationError) {
+            return res.status(400).json({
+                error: "Error de validación",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        if (error instanceof UniqueConstraintError) {
+            return res.status(409).json({
+                error: "Conflicto: valor duplicado en un campo único",
+                detalles: error.errors.map(e => e.message)
+            });
+        }
+
+        // Otros errores
+        console.error("Error en controlador uploadCourseImage:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};
+
+// Necesario para __dirname en ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Descargar imágen de un curso
+export const downloadImage = async (req, res) => {
+    try {
+
+        // Obtener curso
+        const id = req.params.id;
+        const curso = await sCurso.serv_getCourseById(id);
+        if (!curso) {
+            return res.status(404).json({ error: "Curso no encontrado" });
+        }
+        if (!curso.image_path) {
+            return res.status(404).json({ error: "Curso sin imagen asociada" });
+        }
+
+        // Ruta absoluta del archivo
+        const imagePath = path.join(__dirname, '..', curso.image_path);
+
+        // Validar que el archivo existe físicamente
+        if (!fs.existsSync(imagePath)) {
+            return res.status(404).json({ message: 'Archivo de imagen no encontrado en el servidor.' });
+        }
+
+        // Enviar archivo
+        return res.sendFile(imagePath);
+
+    } catch (error) {
+        console.error("Error en controlador downloadImage:", error);
+        res.status(500).json({ error: "Error interno del servidor" });
+    }
+};

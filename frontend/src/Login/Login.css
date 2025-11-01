@@ -1,0 +1,79 @@
+.main_login_register {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: top;
+    background-color: var(--main-bg);
+}
+
+.centered_form_main_div {
+    width: 300px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background-color: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    text-align: center;
+}
+.reg_main_div {
+    width: 350px;
+}
+
+.centered_form_main_div h2 {
+    color: var(--section-text-color);
+}
+
+.login_register_form {
+    width: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.login_register_form label {
+    margin-top: 15px;
+    text-align: left;
+    color: var(--basic-text-color);
+}
+
+.login_register_form input {
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.login_register_form input:focus {
+    border-color: var(--primary-color);
+}
+
+.login_register_form button {
+    margin-top: 10px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.login_register_form button:hover {
+    background-color: var(--secondary-color);
+}
+
+.centered_form_main_div p { /* ¿No tienes cuenta? */
+    margin-top: 15px;
+    color: var(--basic-text-color);
+}
+
+.centered_form_main_div p a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    font-weight: bold;
+}
+.centered_form_main_div p a:hover {
+    text-decoration: underline;
+}
