@@ -4,7 +4,8 @@
   "main": "app.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon app.js",
+    "dev": "nodemon app.js",
+    "start": "node app.js",
     "test:unit": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./config/jest.unit.config.js --runInBand --coverage",
     "test:integration": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config ./config/jest.integration.config.js --runInBand --coverage",
     "test": "npm run test:unit && npm run test:integration"
