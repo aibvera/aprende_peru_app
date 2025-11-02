@@ -54,7 +54,7 @@ export const createCourse = async (req, res) => {
         }
 
         // Validar campos obligatorios
-        if (!data.course_name || !data.price || !data.category || !data.level) {
+        if (!data.course_name || !data.price || !data.id_categ || !data.id_level) {
             return res.status(400).json({ 
                 error: "Faltan datos obligatorios (course_name, price, id_categ, id_level)" 
             });
@@ -105,7 +105,7 @@ export const updateCourse = async (req, res) => {
         // Validar que haya, al menos, un campo para actualizar
         const newData = req.body;
         if (!newData || 
-            (!newData.course_name && !newData.price && !newData.category && !newData.level)) {
+            (!newData.course_name && !newData.price && !newData.id_categ && !newData.id_level)) {
             return res.status(400).json({ error: "Falta algún campo para actualizar" });
         }
 
