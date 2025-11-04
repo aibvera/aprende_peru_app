@@ -33,9 +33,17 @@ export const Curso = orm.define('Curso', {
         type: DataTypes.DECIMAL(6, 2),  // Ej.: 1593.99
         allowNull: false
     },
+    duration: {
+        type: DataTypes.INTEGER(),
+        allowNull: false
+    },
     image_path: {
         type: DataTypes.STRING(255), // Ej: 'uploads/cursos/foto_curso.jpg'
         allowNull: true
+    },
+    detail: {
+        type: DataTypes.TEXT,
+        allowNull: false
     }
 }, {
     tableName: 'courses',  // nombre en la BD

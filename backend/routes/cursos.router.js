@@ -1,6 +1,5 @@
 import express from "express";
 import * as cCursos from "../controllers/cursos.controller.js";
-import upload from "../config/multer.js"
 import { authMiddleware } from "../middleware/auth.js";
 
 const router = express.Router();

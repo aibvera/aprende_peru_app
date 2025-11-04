@@ -21,6 +21,3 @@ export const JWT_REFRESH_EXPIRES = process.env.JWT_REFRESH_EXPIRES;
 
 // Bcrypt
 export const BCRYPT_ROUNDS = parseInt(process.env.BCRYPT_ROUNDS) || 12;
-
-// Folder de uploads
-export const UPLOADS_FOLDER = process.env.UPLOADS_FOLDER;

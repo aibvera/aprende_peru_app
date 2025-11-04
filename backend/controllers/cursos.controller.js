@@ -1,9 +1,5 @@
 import * as sCurso from "../services/cursos.service.js";
 import { ValidationError, UniqueConstraintError } from "sequelize";
-import { UPLOADS_FOLDER } from "../config/env.js";
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
 
 // Obtener todos los cursos (incluye categoría y nivel)
 export const getAllCourses = async (req, res) => {
@@ -167,89 +163,6 @@ export const deleteCourse = async (req, res) => {
 
     } catch (error) {
         console.error("Error en controlador deleteCourse:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-};
-
-// Subir imagen de un curso
-export const uploadCourseImage = async (req, res) => {
-    try {
-        const id = req.params.id;
-
-        // Validamos que se haya subido un archivo
-        if (!req.file) {
-            return res.status(400).json({ message: 'Debe subir una imagen.' });
-        }
-
-        // Actualizamos el curso con la imagen
-        const newData = {
-            image_path: `${UPLOADS_FOLDER}/cursos/${req.file.filename}`
-        };
-        const updatedCourse = await sCurso.serv_updateCourseById(id, newData);
-        if (!updatedCourse) {
-            return res.status(404).json({ error: "Curso no encontrado" });
-        }
-
-        // Devolver el curso actualizado
-        res.status(200).json({
-            message: "Imagen subida correctamente",
-            curso: updatedCourse
-        });
-
-    } catch (error) {
-
-        // Errores por validación a nivel de BD
-        if (error instanceof ValidationError) {
-            return res.status(400).json({
-                error: "Error de validación",
-                detalles: error.errors.map(e => e.message)
-            });
-        }
-
-        if (error instanceof UniqueConstraintError) {
-            return res.status(409).json({
-                error: "Conflicto: valor duplicado en un campo único",
-                detalles: error.errors.map(e => e.message)
-            });
-        }
-
-        // Otros errores
-        console.error("Error en controlador uploadCourseImage:", error);
-        res.status(500).json({ error: "Error interno del servidor" });
-    }
-};
-
-// Necesario para __dirname en ESM
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Descargar imágen de un curso
-export const downloadImage = async (req, res) => {
-    try {
-
-        // Obtener curso
-        const id = req.params.id;
-        const curso = await sCurso.serv_getCourseById(id);
-        if (!curso) {
-            return res.status(404).json({ error: "Curso no encontrado" });
-        }
-        if (!curso.image_path) {
-            return res.status(404).json({ error: "Curso sin imagen asociada" });
-        }
-
-        // Ruta absoluta del archivo
-        const imagePath = path.join(__dirname, '..', curso.image_path);
-
-        // Validar que el archivo existe físicamente
-        if (!fs.existsSync(imagePath)) {
-            return res.status(404).json({ message: 'Archivo de imagen no encontrado en el servidor.' });
-        }
-
-        // Enviar archivo
-        return res.sendFile(imagePath);
-
-    } catch (error) {
-        console.error("Error en controlador downloadImage:", error);
         res.status(500).json({ error: "Error interno del servidor" });
     }
 };
