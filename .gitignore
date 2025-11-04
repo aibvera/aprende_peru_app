@@ -10,3 +10,4 @@ static
 .vercel
 build
 dist
+.firebase
