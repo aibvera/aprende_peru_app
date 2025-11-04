@@ -12,24 +12,6 @@ import Cart from './Cart/Cart.jsx';
 
 function App() {
 
-  // Estado de usuarios válidos de la app
-  const [validUsers, setValidUsers] = useState([
-    {
-      nombre: "Alejandro",
-      apellido: "Bueno",
-      correo: "alejandro.bueno.vera.97@gmail.com",
-      username: "abueno",
-      password: "123"
-    },
-    {
-      nombre: "Tiburcio",
-      apellido: "Ramirez",
-      correo: "tramirez@gmail.com",
-      username: "cliente",
-      password: "123"
-    }
-  ]);
-
   // Estado del usuario logeado (inicialmente null)
   const [currentUser, setCurrentUser] = useState(null);
 
