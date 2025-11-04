@@ -7,3 +7,4 @@ sql_scripts
 uploads
 coverage
 static
+.vercel
