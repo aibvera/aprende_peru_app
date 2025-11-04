@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Register.css';
+import { register } from '../api/auth';
 
-function Register({ validUsers, setValidUsers }) {
+function Register() {
   const navigate = useNavigate();
 
   // Navegación al login
   const goToLogin = () => {
-    navigate('/');
+    navigate('/login');
   };
 
   // Estados para el formulario
@@ -30,7 +31,7 @@ function Register({ validUsers, setValidUsers }) {
 
   // Envío del formulario
   const [statusMsg, setStatusMsg] = useState('');
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validar contraseñas
@@ -39,32 +40,25 @@ function Register({ validUsers, setValidUsers }) {
       return;
     }
 
-    // Validar si el usuario o correo ya existen
-    const userExists = validUsers.some(
-      (u) => u.username === formData.username || u.correo === formData.correo
-    );
-    if (userExists) {
-      setStatusMsg('⚠️ El usuario o correo ya están registrados');
+    // Request
+    try {
+      const user = await register(formData.username, formData.password, formData.nombre, formData.apellido, formData.correo);
+      if (user.username) {
+        setStatusMsg('✅ Registro exitoso. Redirigiendo a login...');
+      } else {
+        setStatusMsg('❌ Campos incorrectos');
+        console.log(user);
+        return;
+      }
+    } catch (error) {
+      setStatusMsg('❌ Error al conectar con el servidor');
+      console.log(error);
       return;
     }
 
-    // Crear nuevo usuario
-    const newUser = {
-      nombre: formData.nombre,
-      apellido: formData.apellido,
-      correo: formData.correo,
-      username: formData.username,
-      password: formData.password
-    };
-
-    // Agregar al array y almacena nombre en sessionstorage
-    setValidUsers([...validUsers, newUser]);
-    sessionStorage.setItem('user', JSON.stringify(newUser.nombre));
-    setStatusMsg('✅ Registro exitoso. Redirigiendo...');
-
     // Redirigir al login después de 1.5 segundos
     setTimeout(() => {
-      navigate('/');
+      goToLogin();
     }, 1500);
   };
 

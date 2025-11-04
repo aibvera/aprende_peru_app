@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import { login } from '../api/auth.js';
 
-function Login({ validUsers, setCurrentUser }) {
+function Login({ setCurrentUser }) {
   const navigate = useNavigate();
 
   // Navegación
@@ -18,21 +19,21 @@ function Login({ validUsers, setCurrentUser }) {
   const [password, setPassword] = useState('');
   const [loginState, setLoginState] = useState('');
 
-  // Función para clic en login
-  const handleSubmit = (e) => {
+  // Función para clic en login (con API)
+  const handleSubmit = async (e) => {
     e.preventDefault(); // evita recargar la página
 
-    // Buscar usuario válido
-    const user = validUsers.find(
-      (u) => u.username === username && u.password === password
-    );
-
-    if (user) {
-      // Guarda usuario en el estado currentUser
-      setCurrentUser(user);
-      setLoginState(`✅ Bienvenido, ${user.nombre}.`);
-    } else {
-      setLoginState('❌ Usuario o contraseña inválido');
+    try {
+      const data = await login(username, password);
+      if (data.user) {
+        setCurrentUser(data.user);
+        setLoginState(`✅ Bienvenido, ${data.user.nombre}.`);
+      } else {
+        setLoginState('❌ Usuario o contraseña inválido');
+      }
+    } catch (error) {
+      setLoginState('❌ Error al conectar con el servidor');
+      console.log(error);
     }
   };
 

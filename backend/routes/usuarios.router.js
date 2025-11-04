@@ -89,7 +89,7 @@ router.get("/username/:username", authMiddleware, cUsuario.getUserByUsername);
  *       400:
  *         description: Datos inválidos o incompletos
  */
-router.post("/add", authMiddleware, cUsuario.createUser);
+router.post("/add", cUsuario.createUser);
 
 
 /**

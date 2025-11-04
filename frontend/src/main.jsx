@@ -39,8 +39,8 @@ function App() {
         <Header currentUser={currentUser} setCurrentUser={setCurrentUser} />
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login validUsers={validUsers} setCurrentUser={setCurrentUser} />} />
-          <Route path="/register" element={<Register validUsers={validUsers} setValidUsers={setValidUsers} />} />
+          <Route path="/login" element={<Login setCurrentUser={setCurrentUser} />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/cursos" element={<AllCourses />} />
           <Route path="/carrito" element={<Cart currentUser={currentUser} />} />
         </Routes>

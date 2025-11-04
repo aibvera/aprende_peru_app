@@ -24,6 +24,9 @@ export const login = async (req, res) => {
         const tokenPayload = {
             id: user.id_user,
             username: user.username,
+            nombre: user.first_name,
+            apellido: user.last_name,
+            correo: user.email,
             role: user.role
         };
         const accessToken = generateAccessToken(tokenPayload);
@@ -58,6 +61,9 @@ export const refreshAccessToken = async (req, res) => {
         const tokenPayload = {
             id: decoded.id,
             username: decoded.username,
+            nombre: decoded.first_name,
+            apellido: decoded.last_name,
+            correo: decoded.email,
             role: decoded.role
         };
         const newAccess = generateAccessToken(tokenPayload);
