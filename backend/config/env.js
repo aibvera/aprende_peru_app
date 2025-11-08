@@ -7,11 +7,11 @@ export const APP_PORT = process.env.APP_PORT;
 export const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS?.split(",") || [];
 
 // BD
-export const DB_HOST = process.env.DB_HOST;
-export const DB_PORT = process.env.DB_PORT;
-export const DB_USER = process.env.DB_USER;
-export const DB_PASSWORD = process.env.DB_PASSWORD;
-export const DB_NAME = process.env.DB_NAME;
+export const DB_HOST = process.env.AWS_DB_HOST;
+export const DB_PORT = process.env.AWS_DB_PORT;
+export const DB_USER = process.env.AWS_DB_USER;
+export const DB_PASSWORD = process.env.AWS_DB_PASSWORD;
+export const DB_NAME = process.env.AWS_DB_NAME;
 
 // JWT
 export const JWT_SECRET = process.env.JWT_SECRET;
